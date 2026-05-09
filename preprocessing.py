@@ -4,7 +4,7 @@
   "metadata": {
     "colab": {
       "provenance": [],
-      "authorship_tag": "ABX9TyO9GGLp0J8dxM87Bkz9hmtb",
+      "authorship_tag": "ABX9TyNMs73loXH/FTRi6WTQKvhM",
       "include_colab_link": true
     },
     "kernelspec": {
@@ -140,6 +140,120 @@
       ],
       "metadata": {
         "id": "YUvBGY1SgsAt"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Prepare dataset and dataloader"
+      ],
+      "metadata": {
+        "id": "Lv3QjvONj2pZ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "    # Prepare dataset and dataloader\n",
+        "    files = [entry.path for entry in ds.all()]\n",
+        "    labels = [file.split('/')[-2] for file in files] # Assuming label is parent folder name\n",
+        "\n",
+        "    # Get unique labels and map them to integers from 0 to num_classes-1\n",
+        "    unique_labels = sorted(list(set(labels)))\n",
+        "    label_to_int = {label: i for i, label in enumerate(unique_labels)}\n",
+        "    numeric_labels = [label_to_int[label] for label in labels]"
+      ],
+      "metadata": {
+        "id": "f1a9sq93kCqV"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Load the dataset"
+      ],
+      "metadata": {
+        "id": "r9PqNhOjk2py"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import dagshub\n",
+        "from dagshub.data_engine import datasources\n",
+        "\n",
+        "# =========================\n",
+        "# INIT DAGSHUB\n",
+        "# =========================\n",
+        "dagshub.init(\n",
+        "    repo_owner='thegreatdamsara',\n",
+        "    repo_name='chords',\n",
+        "    mlflow=False\n",
+        ")\n",
+        "\n",
+        "# =========================\n",
+        "# LOAD DATASOURCE\n",
+        "# =========================\n",
+        "ds = datasources.get(\n",
+        "    'thegreatdamsara/chords',\n",
+        "    'chord_dataset_real'\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "AA21T0euk4w7"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# =========================\n",
+        "# DOWNLOAD DATASET\n",
+        "# =========================\n",
+        "# We use ds.all() to get a QueryResult, which has the download_files method.\n",
+        "LOCAL_DATASET_PATH = ds.all().download_files()\n",
+        "\n",
+        "print(\"✅ Dataset downloaded to:\")\n",
+        "print(LOCAL_DATASET_PATH)"
+      ],
+      "metadata": {
+        "id": "xfAgIPDnlAci"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# BUILD FILE LIST\n",
+        "# =========================\n",
+        "files = []\n",
+        "\n",
+        "for root, dirs, filenames in os.walk(LOCAL_DATASET_PATH):\n",
+        "\n",
+        "    for file in filenames:\n",
+        "\n",
+        "        if file.endswith(\".wav\"):\n",
+        "\n",
+        "            full_path = os.path.join(root, file)\n",
+        "\n",
+        "            files.append(full_path)\n",
+        "\n",
+        "print(f\"✅ Total WAV files found: {len(files)}\")\n",
+        "\n",
+        "# =========================\n",
+        "# VERIFY\n",
+        "# =========================\n",
+        "print(files[:5])"
+      ],
+      "metadata": {
+        "id": "cXm3R1uQlHha"
       },
       "execution_count": null,
       "outputs": []
