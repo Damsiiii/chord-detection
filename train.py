@@ -5,7 +5,7 @@
     "colab": {
       "provenance": [],
       "authorship_tag": "ABX9TyP9oDVXN2IxgBUSyKtJjz3t",
-      "include_colab_link": true
+      "include_colab_link": True
     },
     "kernelspec": {
       "name": "python3",
@@ -28,7 +28,7 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": None,
       "metadata": {
         "id": "Kn8SpniTjH3s"
       },
@@ -48,17 +48,21 @@
         "for epoch in range(EPOCHS):\n",
         "    model.train()\n",
         "    running_loss = 0.0\n",
+        "\n",
         "    for X, y in train_loader:\n",
         "        outputs = model(X)\n",
         "        loss = criterion(outputs, y)\n",
+        "\n",
         "        optimizer.zero_grad()\n",
         "        loss.backward()\n",
         "        optimizer.step()\n",
+        "\n",
         "        running_loss += loss.item()\n",
         "\n",
         "    epoch_loss = running_loss / len(train_loader)\n",
         "    print(f\"Epoch {epoch+1}/{EPOCHS}, Loss: {epoch_loss:.4f}\")\n",
-        "    mlflow.log_metric(\"loss\", epoch_loss, step=epoch)"
+        "\n",
+        "    mlflow.log_metric(\"loss\", epoch_loss, step=epoch)\n"
       ]
     }
   ]
