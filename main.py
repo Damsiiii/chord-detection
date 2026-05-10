@@ -1,6 +1,3 @@
-# =========================
-# IMPORTS
-# =========================
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -15,19 +12,10 @@ from evaluate import evaluate_model
 
 def main():
 
-    # =========================
-    # PREPARE DATA
-    # =========================
     train_loader, test_loader = prepare_data()
 
-    # =========================
-    # CREATE MODEL
-    # =========================
     model = ChordCNN()
 
-    # =========================
-    # LOSS + OPTIMIZER
-    # =========================
     criterion = nn.CrossEntropyLoss()
 
     optimizer = optim.Adam(
@@ -37,15 +25,11 @@ def main():
 
     EPOCHS = 10
 
-#ML flow tracking
-        with mlflow.start_run():
+    with mlflow.start_run():
 
-        # Log hyperparameters
         mlflow.log_param("epochs", EPOCHS)
         mlflow.log_param("learning_rate", 0.001)
-        mlflow.log_param("optimizer", "Adam")
 
-#Train model
         model = train_model(
             model,
             train_loader,
@@ -54,22 +38,21 @@ def main():
             EPOCHS
         )
 
-#Evaluate
         accuracy = evaluate_model(
             model,
             test_loader
         )
 
-        print(f"Accuracy: {accuracy:.4f}")
+        mlflow.log_metric(
+            "accuracy",
+            accuracy
+        )
 
-        mlflow.log_metric("accuracy", accuracy)
-
-#Save the model
         mlflow.pytorch.log_model(
             model,
             "model"
         )
 
-#Entry point
+
 if __name__ == "__main__":
     main()
