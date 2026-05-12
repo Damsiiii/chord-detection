@@ -8,14 +8,19 @@ from dagshub.data_engine import datasources
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 
+# =========================
+# LOAD DAGSHUB TOKEN
+# =========================
+dagshub_token = os.environ["DAGSHUB_TOKEN"]
 
 # =========================
-# DAGSHUB INIT
+# INIT DAGSHUB
 # =========================
 dagshub.init(
     repo_owner="thegreatdamsara",
     repo_name="chords",
-    mlflow=False
+    mlflow=False,
+    token=dagshub_token
 )
 
 # =========================
