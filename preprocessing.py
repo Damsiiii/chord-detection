@@ -16,11 +16,11 @@ dagshub_token = os.environ["DAGSHUB_TOKEN"]
 # =========================
 # INIT DAGSHUB
 # =========================
+# DO NOT pass token into init()
 dagshub.init(
     repo_owner="thegreatdamsara",
     repo_name="chords",
-    mlflow=False,
-    token=dagshub_token
+    mlflow=False
 )
 
 # =========================
