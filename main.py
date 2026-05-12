@@ -12,7 +12,7 @@ from evaluate import evaluate_model
 
 def main():
 
-    train_loader, test_loader = prepare_data()
+    train_loader, test_loader, unique_labels = prepare_data()
 
     model = ChordCNN()
 
@@ -40,7 +40,9 @@ def main():
 
         accuracy = evaluate_model(
             model,
-            test_loader
+            test_loader,
+            unique_labels
+)
         )
 
         mlflow.log_metric(
