@@ -9,14 +9,13 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 
 # =========================
-# LOAD DAGSHUB TOKEN
+# AUTHENTICATION (IMPORTANT)
 # =========================
-dagshub_token = os.environ["DAGSHUB_TOKEN"]
+dagshub.auth.add_app_token(os.environ["DAGSHUB_TOKEN"])
 
 # =========================
 # INIT DAGSHUB
 # =========================
-# DO NOT pass token into init()
 dagshub.init(
     repo_owner="thegreatdamsara",
     repo_name="chords",
