@@ -42,8 +42,7 @@ def main():
             model,
             test_loader,
             unique_labels
-)
-        )
+            )
 
         mlflow.log_metric(
             "accuracy",
