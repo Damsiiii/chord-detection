@@ -1,4 +1,17 @@
+import os
 import mlflow
+
+# =========================
+# MLflow Setup (IMPORTANT)
+# =========================
+
+mlflow.set_tracking_uri(
+    "https://dagshub.com/thegreatdamsara/chords.mlflow/#/"
+)
+
+# GitHub Secrets (works in GitHub Actions)
+os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
 
 
 # =========================
@@ -12,37 +25,47 @@ def train_model(
     epochs
 ):
 
-    for epoch in range(epochs):
+    # 🔥 THIS IS REQUIRED OR NOTHING WILL SHOW IN MLflow
+    with mlflow.start_run():
 
-        model.train()
+        # log hyperparameters once
+        mlflow.log_param("epochs", epochs)
+        mlflow.log_param("model_type", str(type(model).__name__))
 
-        running_loss = 0.0
+        for epoch in range(epochs):
 
-        for X, y in train_loader:
+            model.train()
+            running_loss = 0.0
 
-            outputs = model(X)
+            for X, y in train_loader:
 
-            loss = criterion(outputs, y)
+                outputs = model(X)
+                loss = criterion(outputs, y)
 
-            optimizer.zero_grad()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
-            loss.backward()
+                running_loss += loss.item()
 
-            optimizer.step()
+            epoch_loss = running_loss / len(train_loader)
 
-            running_loss += loss.item()
+            print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
 
-        epoch_loss = running_loss / len(train_loader)
+            # log metric
+            mlflow.log_metric(
+                "train_loss",
+                epoch_loss,
+                step=epoch
+            )
 
-        print(
-            f"Epoch {epoch+1}/{epochs}, "
-            f"Loss: {epoch_loss:.4f}"
-        )
-
-        mlflow.log_metric(
-            "loss",
-            epoch_loss,
-            step=epoch
-        )
+        # OPTIONAL: save model
+        model_path = "model.pth"
+        try:
+            import torch
+            torch.save(model.state_dict(), model_path)
+            mlflow.log_artifact(model_path)
+        except Exception as e:
+            print("Model save skipped:", e)
 
     return model
