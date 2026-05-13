@@ -24,7 +24,7 @@ os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_TOKEN
 # =========================
 
 mlflow.set_tracking_uri(
-    "https://dagshub.com/thegreatdamsara/chords.mlflow/#/"
+    "https://dagshub.com/thegreatdamsara/chords"
 )
 
 # =========================
