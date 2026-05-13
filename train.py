@@ -2,17 +2,30 @@ import os
 import mlflow
 
 # =========================
-# MLflow Setup (IMPORTANT)
+# GET ENV VARIABLES
+# =========================
+
+DAGSHUB_USERNAME = os.getenv("DAGSHUB_USERNAME")
+DAGSHUB_TOKEN = os.getenv("DAGSHUB_TOKEN")
+
+# Debug prints
+print("DAGSHUB_USERNAME:", DAGSHUB_USERNAME)
+print("TOKEN EXISTS:", DAGSHUB_TOKEN is not None)
+
+# =========================
+# SET MLFLOW AUTH
+# =========================
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
+os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_TOKEN
+
+# =========================
+# SET TRACKING URI
 # =========================
 
 mlflow.set_tracking_uri(
     "https://dagshub.com/thegreatdamsara/chords.mlflow/#/"
 )
-
-# GitHub Secrets (works in GitHub Actions)
-os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
-os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
-
 
 # =========================
 # TRAIN FUNCTION
